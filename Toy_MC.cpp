@@ -22,7 +22,7 @@ struct Direction {
 
 //parameters (some should be taken from a configuration file)
 
-double Juno_radius = 40.1 ; //m
+double Juno_radius = 17.7 ; //m
 int Effective_Rate = 1600; //scintillation photons @ 1 MeV
 double Cher_Fraction = 0.01; // Cherenkov photons produced as a fraction of scintilation photons
 double n = 1.55 ; //refraction index
@@ -32,10 +32,10 @@ double m_e = 0.51099895; //MeV    electron mass
 double Be7_energy = 0.862; //MeV    enegy of a 7Be neutrino
 
 //random number generator
-double seed = 56;
+double seed = 754;
 mt19937_64 rnd (seed) ; //stdlib mersenne twister
-uniform_real_distribution <> flat(0,1);
-exponential_distribution <> expo (1./tau) ;
+uniform_real_distribution <double> flat(0,1);
+exponential_distribution <double> expo (1./tau) ;
 
 
 //to keep phi and theta in their intended range
@@ -114,7 +114,7 @@ void Generate_Central_Photons (ofstream& fileout , double Event_Energy) {
     //scintillation photons
     for (int i = 0; i < N_Scint_Photons; i++)  {
         Scint_Photon.theta = flat(rnd) * 2 * M_PI ;
-        Scint_Photon.phi = flat(rnd) * M_PI ;
+        Scint_Photon.phi = acos(1 - 2 * flat(rnd)) ;
         Scint_Photon.gen_time = expo(rnd);
         Scint_Photon.arr_time = Scint_Photon.gen_time + Juno_radius*n/c ;
         Scint_Photon.type = 0;
@@ -150,7 +150,7 @@ void Generate_Central_Photons (ofstream& fileout , double Event_Energy) {
 int main() {
 
     ofstream fileout ("output.txt");
-    double N_events = 1000;
+    double N_events = 100;
     double Event_Energy = 0.5;
 
     for (int i=0;i<N_events;i++) {
